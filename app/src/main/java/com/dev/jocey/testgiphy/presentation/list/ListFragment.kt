@@ -20,7 +20,7 @@ class ListFragment : Fragment(R.layout.fragment_list) {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentListBinding.inflate(inflater, container, false)
-        viewModel.getSearch()
+
 
         return binding.root
 
