@@ -5,22 +5,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.navigation.Navigation
+import androidx.fragment.app.viewModels
 import com.dev.jocey.testgiphy.R
 import com.dev.jocey.testgiphy.databinding.FragmentListBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ListFragment : Fragment(R.layout.fragment_list) {
     private lateinit var binding: FragmentListBinding
+    private val viewModel: ListViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentListBinding.inflate(inflater, container, false)
-        binding.tvNext.setOnClickListener {
-            Navigation.findNavController(binding.root)
-                .navigate(R.id.action_listFragment_to_detailFragment)
-        }
+        viewModel.getSearch()
 
         return binding.root
 

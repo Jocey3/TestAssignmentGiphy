@@ -22,10 +22,17 @@ android {
     }
 
     buildTypes {
+        debug {
+            buildConfigField("String", "API_URL", "\"https://api.giphy.com/v1/gifs/\"")
+            buildConfigField("String", "API_KEY", "\"PxqFDYD8b91gHq1LxO4P3R77TitwILa1\"")
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField("String", "API_URL", "\"https://api.giphy.com/v1/gifs/\"")
+            buildConfigField("String", "API_KEY", "\"PxqFDYD8b91gHq1LxO4P3R77TitwILa1\"")
         }
+
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
