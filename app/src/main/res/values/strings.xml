@@ -4,4 +4,6 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="detail_fragment">Detail fragment</string>
     <string name="list_fragment">List fragment</string>
+    <string name="search">Search</string>
+    <string name="searchs">Search...</string>
 </resources>

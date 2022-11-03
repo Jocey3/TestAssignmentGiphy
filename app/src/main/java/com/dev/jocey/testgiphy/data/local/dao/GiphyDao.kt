@@ -14,7 +14,7 @@ interface GiphyDao {
     suspend fun addAllGifs(gifs: List<GiphyEntity>)
 
     @Query("SELECT * FROM DB_GIPHY_TABLE WHERE blocked = 0")
-    suspend fun getAllNotBlockedGifs(): PagingSource<Int, GiphyEntity>
+     fun getAllNotBlockedGifs(): PagingSource<Int, GiphyEntity>
 
     @Query("UPDATE DB_GIPHY_TABLE SET blocked = 1 WHERE id = :id")
     suspend fun markGifAsBlocked(id: String)

@@ -1,4 +1,4 @@
-package com.dev.jocey.testgiphy
+package com.dev.jocey.testgiphy.core
 
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp

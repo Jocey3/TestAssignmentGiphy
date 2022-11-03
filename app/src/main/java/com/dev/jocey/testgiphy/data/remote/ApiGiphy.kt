@@ -11,6 +11,6 @@ interface ApiGiphy {
         @Query("q") searchQuery: String,
         @Query("limit") limit: Int,
         @Query("offset") offset: Int
-    ): Response<SearchResultDto>
+    ): SearchResultDto
 
 }
