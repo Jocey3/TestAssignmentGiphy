@@ -10,15 +10,15 @@ import com.dev.jocey.testgiphy.data.local.entity.GiphyEntity
 @Dao
 interface GiphyDao {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun addAllGifs(gifs: List<GiphyEntity>)
 
-    @Query("SELECT * FROM DB_GIPHY_TABLE WHERE blocked = 0")
-     fun getAllNotBlockedGifs(): PagingSource<Int, GiphyEntity>
+    @Query("SELECT * FROM DB_GIPHY_TABLE WHERE blocked = 0 AND searchQuery LIKE '%' || :searchQuery || '%'")
+    fun getAllNotBlockedGifsByQuery(searchQuery: String): PagingSource<Int, GiphyEntity>
 
     @Query("UPDATE DB_GIPHY_TABLE SET blocked = 1 WHERE id = :id")
     suspend fun markGifAsBlocked(id: String)
 
-    @Query("DELETE FROM DB_GIPHY_TABLE")
-    suspend fun deleteAllGifs()
+    @Query("DELETE FROM DB_GIPHY_TABLE WHERE blocked=0")
+    suspend fun deleteAllNotBlockedGifs()
 }

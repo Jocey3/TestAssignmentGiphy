@@ -9,7 +9,7 @@ import com.dev.jocey.testgiphy.data.local.entity.GiphyEntity
 import com.dev.jocey.testgiphy.data.paging.DataRemoteMediator
 import com.dev.jocey.testgiphy.data.remote.ApiGiphy
 import com.dev.jocey.testgiphy.domain.repository.GiphyRepository
-import com.dev.jocey.testgiphy.util.Constants.ITEMS_PER_PAGE
+import com.dev.jocey.testgiphy.core.util.Constants.ITEMS_PER_PAGE
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -20,7 +20,7 @@ class GiphyRepositoryImpl @Inject constructor(
 ) : GiphyRepository {
 
     override fun searchGifs(searchQuery: String): Flow<PagingData<GiphyEntity>> {
-        val pagingSourceFactory = { db.giphyDao().getAllNotBlockedGifs() }
+        val pagingSourceFactory = { db.giphyDao().getAllNotBlockedGifsByQuery(searchQuery) }
         return Pager(
             config = PagingConfig(pageSize = ITEMS_PER_PAGE),
             remoteMediator = DataRemoteMediator(
@@ -28,5 +28,9 @@ class GiphyRepositoryImpl @Inject constructor(
             ),
             pagingSourceFactory = pagingSourceFactory
         ).flow
+    }
+
+    override suspend fun blockGif(id: String) {
+        db.giphyDao().markGifAsBlocked(id)
     }
 }

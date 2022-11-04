@@ -6,4 +6,5 @@
     <string name="list_fragment">List fragment</string>
     <string name="search">Search</string>
     <string name="searchs">Search...</string>
+    <string name="delete">Delete</string>
 </resources>

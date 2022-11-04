@@ -3,7 +3,7 @@ package com.dev.jocey.testgiphy.di
 import android.content.Context
 import androidx.room.Room
 import com.dev.jocey.testgiphy.data.local.db.GiphyDataBase
-import com.dev.jocey.testgiphy.util.Constants.GIPHY_DATABASE
+import com.dev.jocey.testgiphy.core.util.Constants.GIPHY_DATABASE
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

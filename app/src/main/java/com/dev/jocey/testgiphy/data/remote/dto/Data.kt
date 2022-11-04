@@ -24,11 +24,12 @@ data class Data(
     val user: User,
     val username: String
 ) {
-    fun toGiphyEntity(): GiphyEntity {
+    fun toGiphyEntity(searchQuery: String): GiphyEntity {
         return GiphyEntity(
             id = id,
             title = title,
             url = images.original.url,
+            searchQuery = searchQuery,
             blocked = false
         )
     }

@@ -1,32 +1,44 @@
 package com.dev.jocey.testgiphy.presentation.list
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.dev.jocey.testgiphy.R
+import com.bumptech.glide.Glide
 import com.dev.jocey.testgiphy.data.local.entity.GiphyEntity
+import com.dev.jocey.testgiphy.databinding.ItemGifBinding
 
-class GifsPagingAdapter : PagingDataAdapter<GiphyEntity, GifsPagingAdapter.QuoteViewHolder>(
+class GifsPagingAdapter : PagingDataAdapter<GiphyEntity, GifsPagingAdapter.GifViewHolder>(
     COMPARATOR
 ) {
+    var adapterClickListener: AdapterClickListener? = null
 
-    class QuoteViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val quote = itemView.findViewById<TextView>(R.id.title_gif)
+    inner class GifViewHolder(private val binding: ItemGifBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+
+        fun bindGif(gif: GiphyEntity) {
+            binding.apply {
+                titleGif.text = gif.title
+                Glide.with(this.root)
+                    .load(gif.url)
+                    .into(gifImage)
+                deleteGif.setOnClickListener {
+                    adapterClickListener?.onGifDeleted(gif)
+                }
+            }
+        }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): QuoteViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_gif, parent, false)
-        return QuoteViewHolder(view)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GifViewHolder {
+        val binding =
+            ItemGifBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return GifViewHolder(binding)
     }
 
 
-    override fun onBindViewHolder(holder: QuoteViewHolder, position: Int) {
-        val item = getItem(position)
-        holder.quote.text = item!!.title
+    override fun onBindViewHolder(holder: GifViewHolder, position: Int) {
+        getItem(position)?.let { holder.bindGif(it) }
     }
 
 
@@ -40,5 +52,10 @@ class GifsPagingAdapter : PagingDataAdapter<GiphyEntity, GifsPagingAdapter.Quote
                 return oldItem == newItem
             }
         }
+    }
+
+    interface AdapterClickListener {
+        fun onGifClicked(gif: GiphyEntity?)
+        fun onGifDeleted(gif: GiphyEntity?)
     }
 }

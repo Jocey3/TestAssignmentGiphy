@@ -1,15 +1,16 @@
 package com.dev.jocey.testgiphy.data.paging
 
+import android.util.Log
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
+import com.dev.jocey.testgiphy.core.util.Constants.ITEMS_PER_PAGE
 import com.dev.jocey.testgiphy.data.local.db.GiphyDataBase
 import com.dev.jocey.testgiphy.data.local.entity.GiphyEntity
 import com.dev.jocey.testgiphy.data.local.entity.GiphyRemoteKeys
 import com.dev.jocey.testgiphy.data.remote.ApiGiphy
-import com.dev.jocey.testgiphy.util.Constants.ITEMS_PER_PAGE
 import retrofit2.HttpException
 import java.io.IOException
 
@@ -53,9 +54,12 @@ class DataRemoteMediator(
 
             val response = apiService.search(
                 searchQuery = searchQuery,
-                offset = currentPage,
+                offset = currentPage * ITEMS_PER_PAGE,
                 limit = ITEMS_PER_PAGE
             )
+            for (i in response.data) {
+                Log.d("myLog", "Item id: ${i.id} title: ${i.title}")
+            }
             val endOfPaginationReached = response.data.isEmpty() ?: true
 
             val prevPage = if (currentPage == 1) null else currentPage - 1
@@ -63,8 +67,8 @@ class DataRemoteMediator(
 
             db.withTransaction {
                 if (loadType == LoadType.REFRESH) {
-                    giphyDao.deleteAllGifs()
-                    giphyRemoteKeysDao.deleteRemoteKeys()
+//                    giphyDao.deleteAllNotBlockedGifs()
+//                    giphyRemoteKeysDao.deleteRemoteKeys()
                 }
                 val keys = response.data.map { unsplashImage ->
                     GiphyRemoteKeys(
@@ -74,10 +78,10 @@ class DataRemoteMediator(
                     )
                 }
                 keys.let { giphyRemoteKeysDao.addAllRemoteKeys(remoteKeys = it) }
-                response.data.let { it ->
+                response.data.let {
                     giphyDao.addAllGifs(
                         gifs = it.map { giphyDto ->
-                            giphyDto.toGiphyEntity()
+                            giphyDto.toGiphyEntity(searchQuery)
                         })
                 }
             }
