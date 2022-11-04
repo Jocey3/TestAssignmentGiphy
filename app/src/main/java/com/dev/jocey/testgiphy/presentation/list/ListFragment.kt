@@ -9,6 +9,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import com.dev.jocey.testgiphy.R
 import com.dev.jocey.testgiphy.core.ext.hideKeyboard
 import com.dev.jocey.testgiphy.data.local.entity.GiphyEntity
@@ -21,10 +22,10 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class ListFragment : Fragment(R.layout.fragment_list), GifsPagingAdapter.AdapterClickListener {
+class ListFragment : Fragment(R.layout.fragment_list), RecyclerGifPagingAdapter.AdapterClickListener {
     private lateinit var binding: FragmentListBinding
     private val viewModel: ListViewModel by viewModels()
-    val adapter = GifsPagingAdapter()
+    val adapter = RecyclerGifPagingAdapter()
     var job: Job? = null
 
     override fun onCreateView(
@@ -35,14 +36,6 @@ class ListFragment : Fragment(R.layout.fragment_list), GifsPagingAdapter.Adapter
         adapter.adapterClickListener = this
         binding.gifsList.adapter = adapter
         collectFromViewModel()
-//        viewModel.gifs.onEach { pagedList ->
-//            adapter.submitData(pagedList)
-//        }.launchIn(lifecycleScope)
-//        adapter.addLoadStateListener { loadState ->
-//            val pg = loadState.source.refresh is LoadState.Loading
-//            binding.progressBar.isVisible = pg
-//            binding.gifsList.isVisible = loadState.source.refresh is LoadState.NotLoading
-//        }
 
         binding.searchView.setOnQueryTextListener(object :
             androidx.appcompat.widget.SearchView.OnQueryTextListener {
@@ -91,8 +84,13 @@ class ListFragment : Fragment(R.layout.fragment_list), GifsPagingAdapter.Adapter
         }
     }
 
-    override fun onGifClicked(gif: GiphyEntity?) {
-
+    override fun onGifClicked(gif: GiphyEntity?, position: Int) {
+        gif?.let {
+            val action =
+                ListFragmentDirections
+                    .actionListFragmentToDetailFragment(gif,position)
+            findNavController().navigate(action)
+        }
     }
 
     override fun onGifDeleted(gif: GiphyEntity?) {

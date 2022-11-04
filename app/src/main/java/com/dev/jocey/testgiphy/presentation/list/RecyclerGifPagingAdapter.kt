@@ -7,17 +7,18 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.dev.jocey.testgiphy.data.local.entity.GiphyEntity
-import com.dev.jocey.testgiphy.databinding.ItemGifBinding
+import com.dev.jocey.testgiphy.databinding.ItemGifRecyclerBinding
 
-class GifsPagingAdapter : PagingDataAdapter<GiphyEntity, GifsPagingAdapter.GifViewHolder>(
-    COMPARATOR
-) {
+class RecyclerGifPagingAdapter :
+    PagingDataAdapter<GiphyEntity, RecyclerGifPagingAdapter.GifViewHolder>(
+        COMPARATOR
+    ) {
     var adapterClickListener: AdapterClickListener? = null
 
-    inner class GifViewHolder(private val binding: ItemGifBinding) :
+    inner class GifViewHolder(private val binding: ItemGifRecyclerBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bindGif(gif: GiphyEntity) {
+        fun bindGif(gif: GiphyEntity, absoluteAdapterPosition: Int) {
             binding.apply {
                 titleGif.text = gif.title
                 Glide.with(this.root)
@@ -26,19 +27,23 @@ class GifsPagingAdapter : PagingDataAdapter<GiphyEntity, GifsPagingAdapter.GifVi
                 deleteGif.setOnClickListener {
                     adapterClickListener?.onGifDeleted(gif)
                 }
+                gifCard.setOnClickListener {
+                    adapterClickListener?.onGifClicked(gif, absoluteAdapterPosition)
+                    println("absoluteAdapterPosition   in VH: $absoluteAdapterPosition")
+                }
             }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GifViewHolder {
         val binding =
-            ItemGifBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            ItemGifRecyclerBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return GifViewHolder(binding)
     }
 
 
     override fun onBindViewHolder(holder: GifViewHolder, position: Int) {
-        getItem(position)?.let { holder.bindGif(it) }
+        getItem(position)?.let { holder.bindGif(it, holder.absoluteAdapterPosition) }
     }
 
 
@@ -55,7 +60,7 @@ class GifsPagingAdapter : PagingDataAdapter<GiphyEntity, GifsPagingAdapter.GifVi
     }
 
     interface AdapterClickListener {
-        fun onGifClicked(gif: GiphyEntity?)
+        fun onGifClicked(gif: GiphyEntity?, position: Int)
         fun onGifDeleted(gif: GiphyEntity?)
     }
 }
